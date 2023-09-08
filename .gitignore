@@ -35,3 +35,4 @@ terraform.rc
 .DS_Store
 
 terraform/.terraform.lock.hcl
+.vscode/settings.json
