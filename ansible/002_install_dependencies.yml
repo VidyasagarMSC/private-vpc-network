@@ -1,7 +1,6 @@
 ---
 - name: Install dependencies
   hosts: all
-  strategy: free
   gather_facts: false
   tasks:
     # - name: SSH into the ASE server using bastion
