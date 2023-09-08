@@ -4,7 +4,7 @@ resource "ibm_is_vpn_server" "client_to_site" {
     for_each = var.vpn_client_authentication_methods
     content {
       method            = client_authentication.value["method"]
-      client_ca_crn     = client_authentication.value["client_ca_crn"]
+      client_ca_crn     = var.secrets_manager_certificate_crn #client_authentication.value["client_ca_crn"]
       identity_provider = client_authentication.value["identity_provider"]
     }
   }
@@ -27,6 +27,14 @@ resource "ibm_is_vpn_server_route" "client_to_site_vpn_route" {
   action      = var.vpn_server_route_action
   name        = "${var.prefix}-client-to-site-vpn-server-route-${count.index + 1}"
 }
+
+resource "ibm_is_vpn_server_route" "rhel_vpn_route" {
+  vpn_server  = ibm_is_vpn_server.client_to_site.vpn_server
+  destination = "10.10.128.0/24"
+  action      = "translate"
+  name        = "${var.prefix}-rhel-route"
+}
+
 
 locals {
   client_to_site_vpn_subnets = [

@@ -84,12 +84,12 @@ variable "vpn_client_authentication_methods" {
   identity_provider = optional(string) }))
   description = "Authentication methods: certificate,username"
   default = [{
-    method = "certificate",
-    client_ca_crn = "crn:v1:bluemix:public:secrets-manager:us-south:a/b881d327f65d48c889c26b4c91af8015:f8892814-a728-465a-802d-5f0bff01e101:secret:3d1e1dac-3d81-259d-4fce-74a3bb628bc1" },
+    method = "certificate"
+    #client_ca_crn = "",
     #{
     #method            = "username",
     #identity_provider = "iam"
-    #}
+    }
   ]
 }
 
@@ -203,6 +203,5 @@ variable "client_to_site_vpn_sg_rules" {
 
 variable "secrets_manager_certificate_crn" {
   type        = string
-  default     = "crn:v1:bluemix:public:secrets-manager:us-south:a/b881d327f65d48c889c26b4c91af8015:f8892814-a728-465a-802d-5f0bff01e101:secret:3d1e1dac-3d81-259d-4fce-74a3bb628bc1"
   description = "Secrets manager certificate CRN"
 }
