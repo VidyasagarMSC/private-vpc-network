@@ -10,5 +10,5 @@ What does the code repository offers
 
 | Code       | Path    |
 | --------   | ------- |
-| Terraform  | https://github.com/VidyasagarMSC/ha-bastion-hosts/tree/main/terraform/README.md    |
-| Ansible    | https://github.com/VidyasagarMSC/ha-bastion-hosts/tree/main/ansible/README.md    |
+| Terraform  | [./terraform/README.md](https://github.com/VidyasagarMSC/ha-bastion-hosts/tree/main/terraform/README.md)    |
+| Ansible    | [./ansible/README.md](https://github.com/VidyasagarMSC/ha-bastion-hosts/tree/main/ansible/README.md)    |
