@@ -1,2 +1,14 @@
-# ha-bastion-hosts
-Highly available Bastion setup
+# HA bastion hosts 
+
+What does the code repository offers
+
+1. Terraform automation code to provision a highly available bastion host and highly available client to site VPN to connect to a private Virtual Private Cloud (VPC) network. 
+2. Ansible automation code to setup session recording on Red Hat Enterprise Linux machine. 
+
+
+## Code structure 
+
+| Code       | Path    |
+| --------   | ------- |
+| Terraform  | https://github.com/VidyasagarMSC/ha-bastion-hosts/tree/main/terraform/README.md    |
+| Ansible    | https://github.com/VidyasagarMSC/ha-bastion-hosts/tree/main/ansible/README.md    |
