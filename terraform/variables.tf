@@ -1,17 +1,29 @@
+variable "ibmcloud_api_key" {
+  type        = string
+  description = "IBM Cloud API key"
+}
+
+variable "ibm_cloud_region" {
+  type        = string
+  description = "IBM Cloud region to provision the resources."
+  default     = "eu-de"
+}
+
 variable "prefix" {
   type        = string
-  default     = "ha-bastion"
+  default     = "private-ha"
   description = "The string that needs to be attached to every resource created"
 }
 variable "vpc_name" {
   type        = string
-  default     = "edge-vpc"
+  default     = "vpc"
   description = "The name of the customer edge vpc"
 }
 
-variable "resource_group_id" {
-  type        = string
-  description = "The resource group where all the resources will be provisioned."
+variable "go_private" {
+  type = bool
+  description = "Set this to TRUE if you plan to use client to site VPN and go private"
+  default = false
 }
 
 variable "address_prefixes" {
@@ -30,92 +42,26 @@ variable "address_prefixes" {
 
 variable "region" {
   type    = string
-  default = "us-south"
+  default = "eu-de"
 }
 
-variable "vsi_bastion_image" {
+#################################################################################
+# VSI specific variables
+#################################################################################
+
+variable "vsi_image" {
   type        = string
   default     = "ibm-redhat-8-6-minimal-amd64-4"
   description = "To see the available images run ibmcloud is images command"
 }
 
-variable "vsi_bastion_profile" {
+variable "vsi_profile" {
   type        = string
   default     = "bx2-2x8"
   description = "To see the available images run ibmcloud is images command"
 }
 
-variable "vpc_subnets" {
-  description = "Subnets in the customer edge VPC"
-  type = object({
-    zone-1 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-    zone-2 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-    zone-3 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-  })
-
-  default = {
-    "zone-1" : [
-      {
-        "acl_name" : "edge-vpc-bastion-subnet-acl",
-        "cidr" : "10.10.0.0/24",
-        "name" : "edge-vpc-zone1-bastion-subnet",
-        "public_gateway" : false
-      },
-      {
-        "acl_name" : "edge-vpc-client-to-site-vpn-acl",
-        "cidr" : "10.10.1.0/24",
-        "name" : "edge-vpc-zone1-client-to-site-subnet",
-        "public_gateway" : false
-      }
-    ],
-    "zone-2" : [
-      {
-        "acl_name" : "edge-vpc-client-to-site-vpn-acl",
-        "cidr" : "10.10.64.0/24",
-        "name" : "edge-vpc-zone2-client-to-site-subnet",
-        "public_gateway" : false
-      },
-      {
-        "acl_name" : "edge-vpc-bastion-subnet-acl",
-        "cidr" : "10.10.65.0/24",
-        "name" : "edge-vpc-zone2-bastion-subnet",
-        "public_gateway" : false
-      }
-    ],
-    "zone-3" : [
-      {
-        "acl_name" : "edge-default-acl",
-        "cidr" : "10.10.128.0/24",
-        "name" : "edge-vpc-zone3-site-to-site-subnet",
-        "public_gateway" : false
-      }
-    ]
-  }
-}
-
-variable "default_network_acl_name" {
-  type    = string
-  default = "default-acl"
-}
-// TODO: tags, Access tags, NO DEFAULTS
-
-
-variable "bastion_sg_rules" {
+variable "vsi_private_sg_rules" {
   type = list(
     object({
       name      = string
@@ -145,53 +91,7 @@ variable "bastion_sg_rules" {
   default = [
     {
       "direction" : "inbound",
-      "name" : "allow-inbound-bastion",
-      "remote" : "192.168.0.0/16"
-    },
-    {
-      "direction" : "inbound",
-      "name" : "allow-inbound-from-mirror",
-      "remote" : "161.26.0.0/16"
-    },
-    {
-      "direction" : "inbound",
-      "name" : "allow-inbound-bastion-ssh",
-      "remote" : "10.30.0.0/17",
-      "tcp" : {
-        "port_max" : 22,
-        "port_min" : 22
-      }
-    },
-    {
-      "direction" : "inbound",
-      "name" : "allow-inbound-bastion-icmp",
-      "remote" : "10.30.0.0/17",
-      icmp : {
-        type : 8
-        code : null
-      }
-    },
-    {
-      "direction" : "inbound",
-      "name" : "allow-inbound-bastion-management-ssh",
-      "remote" : "10.20.0.0/24",
-      "tcp" : {
-        "port_max" : 22,
-        "port_min" : 22
-      }
-    },
-    {
-      "direction" : "inbound",
-      "name" : "allow-inbound-bastion-management-icmp",
-      "remote" : "10.20.0.0/24",
-      icmp : {
-        type : 8
-        code : null
-      }
-    },
-    {
-      "direction" : "inbound",
-      "name" : "allow-inbound-ase-ssh",
+      "name" : "allow-inbound-ssh",
       "remote" : "10.10.0.0/17",
       "tcp" : {
         "port_max" : 22,
@@ -200,7 +100,7 @@ variable "bastion_sg_rules" {
     },
     {
       "direction" : "inbound",
-      "name" : "allow-inbound-ase-icmp",
+      "name" : "allow-inbound-icmp",
       "remote" : "10.10.0.0/17",
       icmp : {
         type : 8
@@ -208,24 +108,123 @@ variable "bastion_sg_rules" {
       }
     },
     {
-      "direction" : "outbound",
-      "name" : "allow-outbound-bastion",
-      "remote" : "192.168.0.0/16"
-    },
-    {
-      "direction" : "outbound",
-      "name" : "allow-outbound-ase-host",
-      "remote" : "10.30.0.0/17"
-    },
-    {
-      "direction" : "outbound",
-      "name" : "allow-outbound-management-host",
-      "remote" : "10.20.0.0/24"
-    },
-    {
-      "direction" : "outbound",
-      "name" : "allow-outbound-mirror",
+      "direction" : "inbound",
+      "name" : "allow-inbound-rhel-mirror",
       "remote" : "161.26.0.0/16"
+    },
+    {
+      "direction" : "inbound",
+      "name" : "allow-inbound-vpe-to-vsi-rule",
+      "remote" : "166.9.0.0/16"
+    },
+    {
+      "direction" : "inbound",
+      "name" : "allow-inbound-lb-to-vsi-rule",
+      "remote" : "10.10.128.0/24"
+    },
+    {
+      "direction" : "outbound",
+      "name" : "allow-outbound-ase",
+      "remote" : "10.10.128.0/24"
+    },
+
+    {
+      "direction" : "outbound",
+      "name" : "allow-outbound-rhel-mirror",
+      "remote" : "161.26.0.0/16"
+    },
+    {
+      "direction" : "outbound",
+      "name" : "allow-outbound-vsi-to-vpe-rule",
+      "remote" : "166.9.0.0/16"
+    },
+    {
+      "direction" : "outbound",
+      "name" : "allow-outbound-management-to-workload-rule",
+      "remote" : "10.10.128.0/24"
     },
   ]
+}
+
+
+#################################################################################
+# VPC Variables
+#################################################################################
+
+variable "vpc_subnets" {
+  description = "Subnets in the customer edge VPC"
+  type = object({
+    zone-1 = list(object({
+      name           = string
+      cidr           = string
+      public_gateway = optional(bool)
+      acl_name       = string
+    }))
+    zone-2 = list(object({
+      name           = string
+      cidr           = string
+      public_gateway = optional(bool)
+      acl_name       = string
+    }))
+    zone-3 = list(object({
+      name           = string
+      cidr           = string
+      public_gateway = optional(bool)
+      acl_name       = string
+    }))
+  })
+
+  default = {
+    "zone-1" : [
+      {
+        "acl_name" : "vpc-bastion-subnet-acl",
+        "cidr" : "10.10.0.0/24",
+        "name" : "vpc-zone1-bastion-subnet",
+        "public_gateway" : false
+      },
+      {
+        "acl_name" : "vpc-client-to-site-vpn-acl",
+        "cidr" : "10.10.1.0/24",
+        "name" : "vpc-zone1-client-to-site-subnet",
+        "public_gateway" : false
+      }
+    ],
+    "zone-2" : [
+      {
+        "acl_name" : "vpc-client-to-site-vpn-acl",
+        "cidr" : "10.10.64.0/24",
+        "name" : "vpc-zone2-client-to-site-subnet",
+        "public_gateway" : false
+      },
+      {
+        "acl_name" : "vpc-bastion-subnet-acl",
+        "cidr" : "10.10.65.0/24",
+        "name" : "vpc-zone2-bastion-subnet",
+        "public_gateway" : false
+      }
+    ],
+    "zone-3" : [
+      {
+        "acl_name" : "vsi-acl",
+        "cidr" : "10.10.128.0/24",
+        "name" : "vpc-zone3-rhel-vsi-subnet",
+        "public_gateway" : false
+      }
+    ]
+  }
+}
+
+variable "default_network_acl_name" {
+  type    = string
+  default = "default-acl"
+}
+// TODO: tags, Access tags, NO DEFAULTS
+
+###############################################################################
+# Client certificates - Secrets Manager
+##############################################################################
+
+variable "secrets_manager_certificate_crn"{
+  type = string 
+  description = "The CRN of the secret created in secrets manager."
 }

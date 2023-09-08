@@ -1,22 +1,20 @@
 locals {
-
-  security_group_rule_bastion_object = {
-    for rule in var.bastion_sg_rules :
+  security_group_rule_private_vsi_object = {
+    for rule in var.vsi_private_sg_rules :
     rule.name => rule
   }
 
 }
 
-
-resource "ibm_is_security_group" "bastion_sg" {
-  name           = "${var.prefix}-edge-bastion-sg"
+resource "ibm_is_security_group" "vsi_sg" {
+  name           = "${var.prefix}-vsi-sg"
   vpc            = ibm_is_vpc.vpc.id
-  resource_group = var.resource_group_id
+  resource_group = ibm_resource_group.group.id
 }
 
-resource "ibm_is_security_group_rule" "bastion_sg_rules" {
-  for_each  = local.security_group_rule_bastion_object
-  group     = ibm_is_security_group.bastion_sg.id
+resource "ibm_is_security_group_rule" "vsi_sg_rules" {
+  for_each  =  local.security_group_rule_private_vsi_object
+  group     = ibm_is_security_group.vsi_sg.id
   direction = each.value.direction
   remote    = each.value.remote
 

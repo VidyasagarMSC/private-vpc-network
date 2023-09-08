@@ -1,11 +1,11 @@
 resource "ibm_is_vpc" "vpc" {
   name                        = "${var.prefix}-${var.vpc_name}"
-  resource_group              = var.resource_group_id
-  default_network_acl_name    = "${var.prefix}-customer-edge-vpc-${var.default_network_acl_name}"
-  default_security_group_name = "${var.prefix}-customer-edge-vpc-sg"
-  default_routing_table_name  = "${var.prefix}-customer-edge-vpc-routing-table"
+  resource_group              = ibm_resource_group.group.id
+  default_network_acl_name    = "${var.prefix}-edge-vpc-${var.default_network_acl_name}"
+  default_security_group_name = "${var.prefix}-edge-vpc-sg"
+  default_routing_table_name  = "${var.prefix}-edge-vpc-routing-table"
   address_prefix_management   = "manual"
-  tags                        = ["vpc:customer-edge"]
+  tags                        = ["vpc:edge"]
 }
 
 resource "ibm_is_vpc_address_prefix" "address" {
@@ -14,23 +14,6 @@ resource "ibm_is_vpc_address_prefix" "address" {
   zone     = each.value.zone
   vpc      = ibm_is_vpc.vpc.id
   cidr     = each.value.cidr
-}
-
-/*resource "ibm_is_vpc_routing_table" "routing_table" {
-  vpc                           = ibm_is_vpc.vpc.id
-  name                          = "${var.prefix}-customer-edge-vpc-routing-table"
-  route_direct_link_ingress     = false
-  route_transit_gateway_ingress = false
-  route_vpc_zone_ingress        = false
-}*/
-
-module "client_to_site_vpn" {
-  source                 = "../../vpn/client-to-site-vpn"
-  prefix                 = var.prefix
-  resource_group_id      = var.resource_group_id
-  vpc_id                 = ibm_is_vpc.vpc.id
-  subnets                = ibm_is_subnet.subnets
-  enable_split_tunneling = true
 }
 
 locals {
