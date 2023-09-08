@@ -1,0 +1,6 @@
+- name: SSH into the remote machine via bastion host
+  ansible.builtin.import_playbook: ./001_ssh.yml
+- name: Install dependencies
+  ansible.builtin.import_playbook: ./002_install_dependencies.yml
+- name: SSH into the remote machine via bastion host and record the sessions
+  ansible.builtin.import_playbook: ./003_ssh_session_recording.yml
