@@ -36,3 +36,4 @@ terraform.rc
 
 terraform/.terraform.lock.hcl
 .vscode/settings.json
+ansible/hosts.ini
