@@ -20,7 +20,7 @@ variable "vpc_id"{
   description = "VPC id"
 }
 
-variable "vpc_subnets" {
+variable "subnets" {
     type = any
     description = "List of subnets"
 }
@@ -99,7 +99,7 @@ variable "bastion_sg_rules" {
     },
     {
       "direction" : "inbound",
-      "name" : "allow-inbound-ase-ssh",
+      "name" : "allow-inbound-ssh",
       "remote" : "10.10.0.0/17",
       "tcp" : {
         "port_max" : 22,
@@ -108,7 +108,7 @@ variable "bastion_sg_rules" {
     },
     {
       "direction" : "inbound",
-      "name" : "allow-inbound-ase-icmp",
+      "name" : "allow-inbound-icmp",
       "remote" : "10.10.0.0/17",
       icmp : {
         type : 8
@@ -122,7 +122,7 @@ variable "bastion_sg_rules" {
     },
     {
       "direction" : "outbound",
-      "name" : "allow-outbound-ase-host",
+      "name" : "allow-outbound-host",
       "remote" : "10.10.128.0/24"
     },
     
