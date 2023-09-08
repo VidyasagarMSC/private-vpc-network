@@ -1,0 +1,23 @@
+---
+- name: Enable session recording
+  hosts: all
+  vars:
+    tlog_scope_sssd: all
+  gather_facts: false
+  tasks:
+    - name: Enable cockpit
+      ansible.builtin.shell: |
+        systemctl enable --now cockpit.socket
+        sudo usermod -s /usr/bin/tlog-rec-session root
+      changed_when: false
+    - name: Creating an SSSD file for session recording
+      copy:
+        dest: "/etc/sssd/conf.d/sssd-session-recording.conf"
+        content: |
+          [session_recording]
+          scope = all
+    - name: Reload SSSD
+      ansible.builtin.shell: |
+        systemctl daemon-reload
+        systemctl restart sssd
+      changed_when: false

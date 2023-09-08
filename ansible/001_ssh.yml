@@ -1,0 +1,32 @@
+---
+- name: SSH into the ASE server via bastion
+  hosts: bastions
+  gather_facts: false
+  tasks:
+    - name: Evaluating the authentication agent & adding the key...
+      delegate_to: localhost
+      ansible.builtin.shell: |
+        eval "$(ssh-agent)"
+        ssh-add {{ ansible_ssh_private_key_file }}
+      register: my_output # <- Registers the command output.
+      changed_when: false
+    - name: Add to known_hosts
+      delegate_to: localhost
+      ansible.builtin.shell: ssh-keygen -F {{ item }} ||
+        ssh-keyscan -H {{ item }} >> ~/.ssh/known_hosts
+      changed_when: false
+      with_items:
+        - "{{ groups['bastions'] }}"
+    - name: Delegate to bastion
+      ansible.builtin.command: "ssh-keyscan {{ item }}"
+      register: new_host_fingerprint
+      changed_when: false
+      with_items:
+        - "{{ groups['servers'] }}"
+    - name: Add remote hosts to known_hosts file
+      delegate_to: localhost
+      ansible.builtin.lineinfile:
+        dest: ~/.ssh/known_hosts
+        line: "{{ item.stdout }}"
+      changed_when: false
+      with_items: "{{ new_host_fingerprint.results }}"
