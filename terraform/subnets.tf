@@ -12,11 +12,11 @@ resource "ibm_is_subnet" "subnets" {
   ]
 }
 
-locals{
+locals {
   # Convert subnets into a single list
   subnet_list = flatten([
     # For each key in the object create an array
-    for zone in keys(var.vpc_subnets):
+    for zone in keys(var.vpc_subnets) :
     # Each item in the list contains information about a single subnet
     [
       for value in var.vpc_subnets[zone] :

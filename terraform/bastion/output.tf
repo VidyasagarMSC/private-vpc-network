@@ -1,3 +1,3 @@
-output "bastion_subnets"{
-    value = local.bastion_subnets
+output "bastion_subnets" {
+  value = local.bastion_subnets
 }

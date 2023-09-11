@@ -15,14 +15,14 @@ variable "resource_group_id" {
   description = "The resource group where all the resources will be provisioned."
 }
 
-variable "vpc_id"{
+variable "vpc_id" {
   type        = string
   description = "VPC id"
 }
 
 variable "subnets" {
-    type = any
-    description = "List of subnets"
+  type        = any
+  description = "List of subnets"
 }
 
 ##################################################################################
@@ -125,7 +125,7 @@ variable "bastion_sg_rules" {
       "name" : "allow-outbound-host",
       "remote" : "10.10.128.0/24"
     },
-    
+
     {
       "direction" : "outbound",
       "name" : "allow-outbound-mirror",
