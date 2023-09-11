@@ -23,7 +23,7 @@ resource "ibm_is_network_acl" "bastion_subnet_acl" {
     destination = "10.10.0.0/17"
     direction   = "inbound"
   }
-   rules {
+  rules {
     name        = "inbound-vsi-to-bastion"
     action      = "allow"
     source      = "10.10.128.0/24"
@@ -101,6 +101,17 @@ resource "ibm_is_network_acl" "edge_vpc_client_to_site_vpn_acl" {
     direction   = "inbound"
   }
   rules {
+    name        = "inbound-vpn-vsi-9090-rule"
+    action      = "allow"
+    source      = "0.0.0.0/0"
+    destination = "0.0.0.0/0"
+    tcp {
+      port_max = 9090
+      port_min = 9090
+    }
+    direction = "inbound"
+  }
+  rules {
     name        = "inbound-deny-vpn-all"
     action      = "deny"
     source      = "0.0.0.0/0"
@@ -144,6 +155,17 @@ resource "ibm_is_network_acl" "edge_vpc_client_to_site_vpn_acl" {
     direction   = "outbound"
   }
   rules {
+    name        = "outbound-vpn-vsi-9090-rule"
+    action      = "allow"
+    source      = "0.0.0.0/0"
+    destination = "0.0.0.0/0"
+    tcp {
+      port_max = 9090
+      port_min = 9090
+    }
+    direction = "outbound"
+  }
+  rules {
     name        = "outbound-deny-vpn-all"
     action      = "deny"
     source      = "0.0.0.0/0"
@@ -155,7 +177,7 @@ resource "ibm_is_network_acl" "edge_vpc_client_to_site_vpn_acl" {
 
 resource "ibm_is_network_acl" "vpc_rhel_vsi_subnet_acl" {
   vpc            = ibm_is_vpc.vpc.id
-  name           = "${var.prefix}-workload-vpc-vsi-subnet-acl"
+  name           = "${var.prefix}-vpc-vsi-subnet-acl"
   resource_group = ibm_resource_group.group.id
   rules {
     name        = "inbound-vpn-to-bastion"
@@ -200,18 +222,40 @@ resource "ibm_is_network_acl" "vpc_rhel_vsi_subnet_acl" {
     direction   = "outbound"
   }
   rules {
-    name        = "inbound-workload-cidr-rule"
+    name        = "inbound-cidr-rule"
     action      = "allow"
     source      = "10.10.128.0/24"
     destination = "10.10.128.0/24"
     direction   = "inbound"
   }
   rules {
-    name        = "outbound-workload-cidr-rule"
+    name        = "outbound-cidr-rule"
     action      = "allow"
     source      = "10.10.128.0/24"
     destination = "10.10.128.0/24"
     direction   = "outbound"
+  }
+  rules {
+    name        = "inbound-vpn-cidr-9090-rule"
+    action      = "allow"
+    source      = "192.168.0.0/24"
+    destination = "10.10.128.0/24"
+    tcp {
+      port_max = 9090
+      port_min = 9090
+    }
+    direction = "inbound"
+  }
+  rules {
+    name        = "outbound-vpn-cidr-9090-rule"
+    action      = "allow"
+    source      = "10.10.128.0/24"
+    destination = "192.168.0.0/24"
+    tcp {
+      port_max = 9090
+      port_min = 9090
+    }
+    direction = "outbound"
   }
   rules {
     name        = "inbound-deny-all"
