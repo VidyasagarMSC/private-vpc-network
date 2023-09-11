@@ -1,4 +1,4 @@
-# HA bastion hosts 
+# Private VPC network Architecture with Automation
 
 What does the code repository offers
 
