@@ -15,14 +15,14 @@ variable "resource_group_id" {
   description = "The resource group where all the resources will be provisioned."
 }
 
-variable "vpc_id"{
+variable "vpc_id" {
   type        = string
   description = "VPC id"
 }
 
 variable "vpc_subnets" {
-    type = any
-    description = "List of subnets"
+  type        = any
+  description = "List of subnets"
 }
 
 ##########################################################################
@@ -204,4 +204,10 @@ variable "client_to_site_vpn_sg_rules" {
 variable "secrets_manager_certificate_crn" {
   type        = string
   description = "Secrets manager certificate CRN"
+}
+
+variable "allow_port_9090" {
+  type        = bool
+  description = "Allow traffic on port 9090 for session recording web console"
+  default     = false
 }

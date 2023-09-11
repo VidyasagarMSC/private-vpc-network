@@ -20,12 +20,6 @@ variable "vpc_name" {
   description = "The name of the customer edge vpc"
 }
 
-variable "go_private" {
-  type = bool
-  description = "Set this to TRUE if you plan to use client to site VPN and go private"
-  default = false
-}
-
 variable "address_prefixes" {
   type = object({
     zone-1 = optional(list(string))
@@ -140,7 +134,7 @@ variable "vsi_private_sg_rules" {
     },
     {
       "direction" : "outbound",
-      "name" : "allow-outbound-management-to-workload-rule",
+      "name" : "allow-outbound-rule",
       "remote" : "10.10.128.0/24"
     },
   ]
@@ -224,7 +218,17 @@ variable "default_network_acl_name" {
 # Client certificates - Secrets Manager
 ##############################################################################
 
-variable "secrets_manager_certificate_crn"{
-  type = string 
+variable "secrets_manager_certificate_crn" {
+  type        = string
   description = "The CRN of the secret created in secrets manager."
+}
+
+###############################################################################
+# Session recording variables 
+##############################################################################
+
+variable "allow_port_9090" {
+  type        = bool
+  description = "Allow traffic on port 9090 for session recording web console"
+  default     = false
 }

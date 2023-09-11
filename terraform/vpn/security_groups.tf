@@ -86,3 +86,33 @@ resource "ibm_is_security_group_rule" "client_to_site_vpn_rules" {
     }
   }
 }
+
+###########################################################################
+# Security group rules to allow inbound and outbound traffic on port 9090
+# for session recording web console
+###########################################################################
+resource "ibm_is_security_group_rule" "allow_9090_inbound" {
+  for_each  = var.allow_port_9090 ? toset(local.security_groups) : []
+  group     = each.value
+  direction = "inbound"
+  remote    = "0.0.0.0"
+  tcp {
+    port_min = 9090
+    port_max = 9090
+  }
+}
+
+resource "ibm_is_security_group_rule" "allow_9090_outbound" {
+  for_each  = var.allow_port_9090 ? toset(local.security_groups) : []
+  group     = each.value
+  direction = "outbound"
+  remote    = "0.0.0.0"
+  tcp {
+    port_min = 9090
+    port_max = 9090
+  }
+}
+
+locals {
+  security_groups = [ibm_is_security_group.client_to_site_vpn_deliver_sg.id, ibm_is_security_group.client_to_site_vpn_sg.id]
+}
