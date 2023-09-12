@@ -16,3 +16,5 @@ What does the code repository offers
 ## Article 
 
 Follow the instructions in this [technical article published on DZone](https://dzone.com/articles/build-a-private-vpc-network-architecture-and-deplo) to deploy a private VPC network architecture 
+
+![Architecture diagram](https://dz2cdn1.dzone.com/storage/temp/17196570-blogdrawio.png)
