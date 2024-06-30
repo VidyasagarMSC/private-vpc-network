@@ -1,5 +1,6 @@
 {
   "scanSettings": {
+    "enableIaC": true,
     "baseBranches": []
   },
   "checkRunSettings": {
