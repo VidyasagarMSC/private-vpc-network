@@ -1,15 +1,5 @@
 {
   "scanSettings": {
-    "enableIaC": true,
-    "baseBranches": ["main"]
-  },
-  "checkRunSettings": {
-    "vulnerableCheckRunConclusionLevel": "failure",
-    "displayMode": "diff",
-    "useMendCheckNames": true
-  },
-  "issueSettings": {
-    "minSeverityLevel": "LOW",
-    "issueType": "DEPENDENCY"
+    "enableIaC": true
   }
 }
