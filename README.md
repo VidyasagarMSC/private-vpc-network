@@ -1,4 +1,4 @@
-# Private VPC network Architecture with Automation
+# Setup and configure your Private VPC network Architecture with Automation
 
 What does the code repository offers
 
